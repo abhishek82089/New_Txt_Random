@@ -215,9 +215,9 @@ async def account_login(bot: Client, m: Message):                               
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   #Bot Created by @NtrRazYt
 # Command to trigger the login and batch fetching process
 @bot.on_message(filters.command(["cw"]) 
-async def login_and_fetch_command_handler(client, message):
+async def fetch_command_handler(client.id, message):
     try:
-        credentials = await client.ask(message.chat.id, "Send your credentials in this format - email:password:")
+        credentials = await client.ask(message.client.id, "Send your credentials in this format - email:password:")
         email, password = credentials.text.split(":")
         r = requests.post('https://elearn.crwilladmin.com/api/v5/login-other', headers=headers, data={'email': email, 'password': password}).json()
         token = r['data']['token']
@@ -228,7 +228,7 @@ async def login_and_fetch_command_handler(client, message):
         batches_info = "\n".join(f"{data['id']} - {data['batchName']} By {data['instructorName']}" for data in batch_data)
         await message.reply(f'Token:\n{token}\n\nYou have these batches:\nBATCH-ID - BATCH NAME - INSTRUCTOR\n{batches_info}')
 
-        batch_ids = await client.ask(message.chat.id, f"Now send the Batch IDs to Download\n\nSend like this 1,2,3,4 so on\nor copy paste or edit below IDs according to you:\n\n`\n{', '.join(str(data['id']) for data in batch_data)}\n`")
+        batch_ids = await client.ask(message.client.id, f"Now send the Batch IDs to Download\n\nSend like this 1,2,3,4 so on\nor copy paste or edit below IDs according to you:\n\n`\n{', '.join(str(data['id']) for data in batch_data)}\n`")
 
         batch_ids_list = [id.strip() for id in batch_ids.text.split(",")]
         if batch_ids_list:
@@ -258,7 +258,7 @@ async def login_and_fetch_command_handler(client, message):
                 pdf_count = len([line for line in open(text_file) if line.endswith(".pdf\n")])
 
                 caption = f"App Name: CareerWill\nBatch Name: `{bn}`\n\n🎬 Total Video: {video_count}\n📝 Total PDF: {pdf_count}"
-                await client.send_document(message.chat.id, text_file, caption=caption)
+                await client.send_document(message.client.id, text_file, caption=caption)
                 os.remove(text_file)
             await message.reply("✅ Done!")
         else:
